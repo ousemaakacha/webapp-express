@@ -15,6 +15,18 @@ app.get("/test-db", (req, res) => {
 });
 
 
+app.get("/movies",  (req, res) => {
+ const sql = "Select * FROM movies";
+ connection.query(sql, (err, results) => {
+  if (err){
+    return res.status(500).json({ error: "cant read mpvies"})
+  }
+  res.json(results)
+ })
+});
+
+
+
 // avio il server
 app.listen(3000, () => {
   console.log("Server avviato su http://localhost:3000");
