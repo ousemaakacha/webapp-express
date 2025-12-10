@@ -14,6 +14,7 @@ app.get("/test-db", (req, res) => {
   });
 });
 
+// rotta Index
 
 app.get("/movies",  (req, res) => {
  const sql = "Select * FROM movies";
@@ -23,6 +24,42 @@ app.get("/movies",  (req, res) => {
   }
   res.json(results)
  })
+});
+
+
+// Rotta show
+
+app.get("/movies/:id", (req, res) => {
+  const movieId = req.params.id;
+
+  const sqlMovie = "SELECT * FROM movies WHERE id = ?";
+  const sqlReviews = "SELECT * FROM reviews WHERE movie_id = ?";
+
+  connection.query(sqlMovie, [movieId], (err, movieResults) => {
+    if (err) {
+      return res.status(500).json({ error: "Database error" });
+    }
+
+   
+    if (movieResults.length === 0) {
+      return res.status(404).json({ error: "Movie not found" });
+    }
+
+    const movie = movieResults[0];
+
+    
+    connection.query(sqlReviews, [movieId], (err, reviewResults) => {
+      if (err) {
+        return res.status(500).json({ error: "Error cant load reviews" });
+      }
+
+      
+      res.json({
+        movie,
+        reviews: reviewResults
+      });
+    });
+  });
 });
 
 
