@@ -49,7 +49,7 @@ app.get("/movies/:id", (req, res) => {
     }
 
    
-    if (movieResults.length === 0) {
+    if (movieResults.length == 0) {
       return res.status(404).json({ error: "Movie not found" });
     }
 
