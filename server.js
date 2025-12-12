@@ -4,8 +4,10 @@ const cors = require("cors")
 
 const app = express();
 
-app.use(cors({origin: 'http://localhost:5173/'}))
+app.use(cors({origin: 'http://localhost:5173'}))
 app.use(express.json());
+
+app.use("/images", express.static("movies_cover"))
 
 // testo la rotta 
 app.get("/test-db", (req, res) => {
@@ -25,7 +27,10 @@ app.get("/movies",  (req, res) => {
   if (err){
     return res.status(500).json({ error: "cant read mpvies"})
   }
-  res.json(results)
+  res.json(results.map(m => ({
+    ...m, 
+    imageUrl: `http://localhost:3000/images/${m.image}`
+  })))
  })
 });
 
@@ -49,6 +54,8 @@ app.get("/movies/:id", (req, res) => {
     }
 
     const movie = movieResults[0];
+
+    movie.imageUrl = `http://localhost:3000/images/${movie.image}`;
 
     
     connection.query(sqlReviews, [movieId], (err, reviewResults) => {
