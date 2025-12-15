@@ -73,8 +73,29 @@ app.get("/movies/:id", (req, res) => {
 });
 
 
+// aggiungo una recesnione
+app.post("/reviews", (req, res) => {
+  const { movieId, name, text, vote } = req.body;
 
-// avio il server
+  
+  if (!movieId || !name || !text || !vote) {
+    return res.status(400).json({ error: "missing data" });
+  }
+
+  const sql = "INSERT INTO reviews (movie_id, name, text, vote) VALUES (?, ?, ?, ?)";
+
+  connection.query(sql, [movieId, name, text, vote], (err, result) => {
+    if (err) {
+      return res.status(500).json({ error: "cant save review" });
+    }
+    res.status(201).json({ message: "review added", reviewId: result.insertId });
+  });
+});
+
+
+
+
+// avvio il server
 app.listen(3000, () => {
   console.log("Server avviato su http://localhost:3000");
 });
